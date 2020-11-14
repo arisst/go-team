@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"go-team/app"
 	"go-team/controllers"
 
 	"github.com/gorilla/mux"
@@ -12,6 +13,9 @@ import (
 
 func appRoute() http.Handler {
 	router := mux.NewRouter()
+
+	router.HandleFunc("/api/user/new", controllers.CreateAccount).Methods("POST")
+	router.HandleFunc("/api/user/login", controllers.Authenticate).Methods("POST")
 
 	router.HandleFunc("/api/teams", controllers.CreateTeam).Methods("POST")
 	router.HandleFunc("/api/teams", controllers.GetTeams).Methods("GET")
@@ -24,6 +28,8 @@ func appRoute() http.Handler {
 	router.HandleFunc("/api/players/{id}", controllers.FindPlayer).Methods("GET")
 	router.HandleFunc("/api/players/{id}", controllers.UpdatePlayer).Methods("PUT")
 	router.HandleFunc("/api/players/{id}", controllers.DeletePlayer).Methods("DELETE")
+
+	router.Use(app.JwtAuthentication)
 
 	return router
 }
